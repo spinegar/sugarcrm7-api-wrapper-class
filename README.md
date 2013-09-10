@@ -21,12 +21,6 @@ Contents
 Edit composer.json
 
 	{
-		"repositories": [
-			{
-				"type": "vcs",
-				"url": "https://github.com/spinegar/sugarcrm7-api-wrapper-class"
-			}
-		],
 		"require": {
 			"spinegar/sugar7wrapper": "dev-master"
 		},
