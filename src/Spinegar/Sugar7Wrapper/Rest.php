@@ -1,7 +1,7 @@
 <?php namespace Spinegar\Sugar7Wrapper;
 
-use Guzzle\Http\Client;
 use Guzzle\Common\Event;
+use Guzzle\Http\Client;
 use Guzzle\Http\Query;
 
 /**
@@ -305,14 +305,14 @@ class Rest {
   }
 
   /**
-  * Function: file()
+  * Function: download()
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
   *   $field = Field associated to the file
   * Description:  Gets the contents of a single file related to a field for a module record.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function file($module, $record, $field, $destination)
+  function download($module, $record, $field, $destination)
   {
     $file = $this->getUrl() . $module . '/' . $record . '/file/' . $field;
     $request = $this->client->get($module . '/' . $record . '/file/' . $field );
@@ -326,7 +326,7 @@ class Rest {
   }
 
   /**
-  * Function: saveFile()
+  * Function: upload()
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
   *   $params = [
@@ -337,7 +337,7 @@ class Rest {
   * Description:  Saves a file. The file can be a new file or a file override.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function saveFile($module, $record, $field, $path, $params=array())
+  function upload($module, $record, $field, $path, $params=array())
   {
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $contentType = finfo_file($finfo, $path);
