@@ -419,7 +419,7 @@ class Rest {
   * Description:  This method removes the relationship for 2 records
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function unrelate($module, $record, $link, $related_record)
+  function divorce($module, $record, $link, $related_record)
   {
     $request = $this->client->delete($module . '/' . $record . '/link/' . $link . '/' . $related_record);
     $result = $request->send()->json();
