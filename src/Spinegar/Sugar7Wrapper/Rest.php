@@ -105,17 +105,6 @@ class Rest {
   }
 
   /**
-  * Function: getUrl()
-  * Parameters:   none    
-  * Description:  Get the SugarCRM REST API URL
-  * Returns:  returns $url
-  */
-  function getUrl()
-  {
-    return $this->url;
-  }
-
-  /**
   * Function: setUrl()
   * Parameters:   $value = URL for the REST API    
   * Description:  Set $url
