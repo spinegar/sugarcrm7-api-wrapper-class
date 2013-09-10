@@ -111,4 +111,4 @@ Then install with composer
 	$sugar->deleteFile('Notes', $record_id, 'filename')
 
 	/* Download  the file associated to the filename field of a note to the server */
-	$sugar->file('Notes', $record_id, 'filename', '/path/to/destination');
+	$sugar->download('Notes', $record_id, 'filename', '/path/to/destination');
