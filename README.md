@@ -97,7 +97,7 @@ Then install with composer
 		'contact_role' => 'Influencer'
 	))
 
-	/* Retrieve all attachments for a case */
+	/* Retrieve a list of attachments for a case */
 	$attachments = $sugar->related('Cases', $record_id, 'notes');
 
 	foreach($attachments['records'] as $attachment)
