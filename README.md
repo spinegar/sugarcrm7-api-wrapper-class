@@ -48,7 +48,7 @@ Then install with composer
 	/* Retrieve all records in the Cases module */
 	$sugar->search('Cases');
 
-	/* Retrieve all records in the Cases module where the name = 'Case Name1' or 'Case Name2' */
+	/* Retrieve all records in the Cases module where the name = 'Case1 Name' or 'Case2 Name' */
 	$sugar->search('Cases', array(
 		'q' => '"Case1 Name" "Case2 Name"'
 	)); 
