@@ -413,7 +413,7 @@ class Rest {
   }
 
   /**
-  * Function: unrelate()
+  * Function: divorce()
   * Parameters: $module = Record Type
   *   $record = The record to unfavorite
   * Description:  This method removes the relationship for 2 records
