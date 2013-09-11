@@ -90,7 +90,7 @@ Then install with composer
 	))
 
 	/* Delete relationship between an account and case */
-	$sugar->divorce('Accounts', $record_id, 'cases', $related_record_id);
+	$sugar->unrelate('Accounts', $record_id, 'cases', $related_record_id);
 
 	/* Update relationship data */
 	$sugar->updateRelationship('Opportunities', $record_id, 'contacts', $related_record_id, array(
