@@ -39,11 +39,10 @@ Then install with composer
 	/* Instantiate and authenticate */
 	$sugar = new \Spinegar\Sugar7Wrapper\Rest();
 
-	$sugar->setUrl('https://sugar/rest/v10/');
-	$sugar->setUsername('restUser');
-	$sugar->setPassword('password');
-
-	$sugar->connect();
+	$sugar->setUrl('https://sugar/rest/v10/')
+		->setUsername('restUser')
+		->setPassword('password')
+		->connect();
 
 	/* Retrieve all records in the Cases module */
 	$sugar->search('Cases');

@@ -114,7 +114,7 @@ class Rest {
   {
     $this->url = $value;
 
-    return $this->url;
+    return $this;
   }
 
   /**
@@ -127,7 +127,7 @@ class Rest {
   {
     $this->username = $value;
 
-    return $this->username;
+    return $this;
   }
 
   /**
@@ -140,7 +140,7 @@ class Rest {
   {
     $this->password = $value;
 
-    return $this->password;
+    return $this;
   }
 
   /**
