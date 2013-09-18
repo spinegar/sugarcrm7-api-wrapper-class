@@ -401,7 +401,7 @@ class Rest {
   * Description:  This method relates 2 records
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function relate($module, $record, $link, $related_record, $fields)
+  function relate($module, $record, $link, $related_record, $fields=array())
   {
     $request = $this->client->post($module . '/' . $record . '/link/' . $link . '/' . $related_record, array(), $fields);
     $result = $request->send()->json();
@@ -440,7 +440,7 @@ class Rest {
   * Description:  This method updates relationship data
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function updateRelationship($module, $record, $link, $related_record, $fields)
+  function updateRelationship($module, $record, $link, $related_record, $fields=array())
   {
     $request = $this->client->put($module . '/' . $record . '/link/' . $link . '/' . $related_record, array(), json_encode($fields));
     $result = $request->send()->json();
