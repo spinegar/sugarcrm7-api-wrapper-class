@@ -17,41 +17,39 @@ use Guzzle\Http\Query;
 class Rest {
 
   /**
-  * Variable: $url
-  * Description:  The URL of the SugarCRM REST API
-  * Example:  https://sugar/rest/v10/
-  */
-  private $url = null;
-
-  /**
   * Variable: $username
   * Description:  A SugarCRM User. 
   */
-  private $username = null;
+  private $username;
 
   /**
   * Variable: $password
   * Description:  The password for the $username SugarCRM account
   */
-  private $password = null;
+  private $password;
 
   /**
   * Variable: $token
   * Description:  OAuth 2.0 token
   */
-  private $token = null;
+  private $token;
 
   /**
   * Variable: $client
   * Description:  Guzzle Client
   */
-  public $client = null;
+  private $client;
 
   /**
-  * Variable: $authenticated
-  * Description:  Tells us if we are authenticated or not
+  * Function: __construct()
+  * Parameters:   none    
+  * Description:  Construct Class
+  * Returns:  VOID
   */
-  public $authenticated = false;
+  function __construct()
+  {
+    $this->client = new Client();
+  }
 
   /**
   * Function: __destruct()
@@ -61,15 +59,13 @@ class Rest {
   */
   function __destruct()
   {
-    if(!$this->client)
-      return false;
-
     $request = $this->client->post('oauth2/logout');
     $request->setHeader('OAuth-Token', $this->token);    
     $result = $request->send()->json();
 
     return $result;
   }
+
   
   /**
   * Function: connect()
@@ -77,10 +73,8 @@ class Rest {
   * Description:  Authenticate and set the oAuth 2.0 token
   * Returns:  TRUE on login success, otherwise FALSE
   */
-  function connect()
+  public function connect()
   {
-    $this->client = new Client($this->url);
-
     $request = $this->client->post('oauth2/token', null, array(
         'grant_type' => 'password',
         'client_id' => 'sugar',
@@ -98,9 +92,21 @@ class Rest {
     $this->client->getEventDispatcher()->addListener('request.before_send', function(Event $event) {
       $event['request']->setHeader('OAuth-Token', $this->token);
     });
-
-    $this->authenticated = true;
     
+    return true;
+  }
+
+  /**
+  * Function: check()
+  * Parameters:   none    
+  * Description:  Check if authenticated
+  * Returns:  TRUE if authenticated, otherwise FALSE
+  */
+  public function check()
+  {
+    if(!$this->token)
+      return false;
+
     return true;
   }
 
@@ -110,9 +116,9 @@ class Rest {
   * Description:  Set $url
   * Returns:  returns $url
   */
-  function setUrl($value)
+  public function setUrl($value)
   {
-    $this->url = $value;
+    $this->client->setBaseUrl($value) ;
 
     return $this;
   }
@@ -123,7 +129,7 @@ class Rest {
   * Description:  Set $username
   * Returns:  returns $username
   */
-  function setUsername($value)
+  public function setUsername($value)
   {
     $this->username = $value;
 
@@ -136,7 +142,7 @@ class Rest {
   * Description:  Set $password
   * Returns:  returns $passwrd
   */
-  function setPassword($value)
+  public function setPassword($value)
   {
     $this->password = $value;
 
@@ -150,8 +156,11 @@ class Rest {
   * Description:  This method creates a new record of the specified type
   * Returns:  returns Array if successful, otherwise FALSE
   */
-  function create($module, $fields)
+  public function create($module, $fields)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->post($module, null, $fields);
     $result = $request->send()->json();
 
@@ -176,8 +185,11 @@ class Rest {
   * Description:  Search records in this module
   * Returns:  returns Object if successful, otherwise FALSE
   */
-  function search($module, $params = array())
+  public function search($module, $params = array())
   {
+    if(!self::check())
+      self::connect();
+
     // return $params;
     $request = $this->client->get($module);
 
@@ -202,8 +214,11 @@ class Rest {
   * Description:  This method deletes a record of the specified type
   * Returns:  returns Object if successful, otherwise FALSE
   */
-  function delete($module, $record)
+  public function delete($module, $record)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->delete($module . '/' . $record);
     $result = $request->send();
 
@@ -220,8 +235,11 @@ class Rest {
   * Description:  This method retrieves a record of the specified type
   * Returns:  Returns a single record
   */
-  function retrieve($module, $record)
+  public function retrieve($module, $record)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->get($module . '/' . $record);
     $result = $request->send()->json();
 
@@ -239,8 +257,11 @@ class Rest {
   * Description:  This method updates a record of the specified type
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function update($module, $record, $fields)
+  public function update($module, $record, $fields)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->put($module . '/' . $record, null, json_encode($fields));
     $result = $request->send()->json();
 
@@ -257,8 +278,11 @@ class Rest {
   * Description:  This method favorites a record of the specified type
   * Returns:  Returns TRUE if successful, otherwise FALSE
   */
-  function favorite($module, $record)
+  public function favorite($module, $record)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->put($module . '/' . $record . '/favorite');
     $result = $request->send()->json();
 
@@ -275,8 +299,11 @@ class Rest {
   * Description:  This method unfavorites a record of the specified type
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function unfavorite($module, $record)
+  public function unfavorite($module, $record)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->delete($module . '/' . $record . '/favorite');
     $result = $request->send()->json();
 
@@ -293,8 +320,11 @@ class Rest {
   * Description:  Gets a listing of files related to a field for a module record.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function files($module, $record)
+  public function files($module, $record)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->get($module . '/' . $record . '/file');
     $result = $request->send()->json();
 
@@ -312,8 +342,11 @@ class Rest {
   * Description:  Gets the contents of a single file related to a field for a module record.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function download($module, $record, $field, $destination)
+  public function download($module, $record, $field, $destination)
   {
+    if(!self::check())
+      self::connect();
+
     $file = $this->getUrl() . $module . '/' . $record . '/file/' . $field;
     $request = $this->client->get($module . '/' . $record . '/file/' . $field );
     $request->setResponseBody($destination);
@@ -337,8 +370,11 @@ class Rest {
   * Description:  Saves a file. The file can be a new file or a file override.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function upload($module, $record, $field, $path, $params=array())
+  public function upload($module, $record, $field, $path, $params=array())
   {
+    if(!self::check())
+      self::connect();
+
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $contentType = finfo_file($finfo, $path);
     finfo_close($finfo);
@@ -361,8 +397,11 @@ class Rest {
   * Description:  Saves a file. The file can be a new file or a file override.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function deleteFile($module, $record, $field)
+  public function deleteFile($module, $record, $field)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->delete($module . '/' . $record . '/file/' . $field);
     $result = $request->send()->json();
 
@@ -380,8 +419,11 @@ class Rest {
   * Description:  This method retrieves a list of records from the specified link
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function related($module, $record, $link)
+  public function related($module, $record, $link)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->get($module . '/' . $record . '/link/' . $link);
     $result = $request->send()->json();
 
@@ -401,8 +443,11 @@ class Rest {
   * Description:  This method relates 2 records
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function relate($module, $record, $link, $related_record, $fields=array())
+  public function relate($module, $record, $link, $related_record, $fields=array())
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->post($module . '/' . $record . '/link/' . $link . '/' . $related_record, array(), $fields);
     $result = $request->send()->json();
 
@@ -419,8 +464,11 @@ class Rest {
   * Description:  This method removes the relationship for 2 records
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function unrelate($module, $record, $link, $related_record)
+  public function unrelate($module, $record, $link, $related_record)
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->delete($module . '/' . $record . '/link/' . $link . '/' . $related_record);
     $result = $request->send()->json();
 
@@ -440,8 +488,11 @@ class Rest {
   * Description:  This method updates relationship data
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  function updateRelationship($module, $record, $link, $related_record, $fields=array())
+  public function updateRelationship($module, $record, $link, $related_record, $fields=array())
   {
+    if(!self::check())
+      self::connect();
+
     $request = $this->client->put($module . '/' . $record . '/link/' . $link . '/' . $related_record, array(), json_encode($fields));
     $result = $request->send()->json();
 
