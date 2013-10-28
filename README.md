@@ -41,7 +41,8 @@ Then install with composer
 
 	$sugar->setUrl('https://sugar/rest/v10/')
 		->setUsername('restUser')
-		->setPassword('password');
+		->setPassword('password')
+		->connect();
 
 	/* Retrieve all records in the Cases module */
 	$sugar->search('Cases');
