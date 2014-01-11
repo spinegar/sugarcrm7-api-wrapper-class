@@ -88,9 +88,10 @@ class Rest {
       return false;
 
     $this->token = $results['access_token'];
-
-    $this->client->getEventDispatcher()->addListener('request.before_send', function(Event $event) {
-      $event['request']->setHeader('OAuth-Token', $this->token);
+    $token = $this->token;
+    
+    $this->client->getEventDispatcher()->addListener('request.before_send', function(Event $event) use ($token) {
+      $event['request']->setHeader('OAuth-Token', $token);
     });
     
     return true;
