@@ -112,6 +112,19 @@ class Rest {
   }
 
   /**
+  * Function: setClientOptions()
+  * Parameters:   $key = Guzzle option, $value = Value  
+  * Description:  Set Default options for the Guzzle client.
+  * Returns:  returns $this
+  */
+  public function setClientOption($key, $value)
+  {
+    $this->client->setDefaultOption($key, $value);
+
+    return $this;
+  }
+
+  /**
   * Function: setUrl()
   * Parameters:   $value = URL for the REST API    
   * Description:  Set $url
