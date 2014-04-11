@@ -222,6 +222,25 @@ class Rest {
   }
 
   /**
+   * Function: filter()
+   * Parameters: $module = Module type
+   *   $params = Filter Criteria
+   * Description:   Filter records in this module
+   * Returns: returns a list of module beans if successful, otherwise false
+   */
+  public function filter($module, $params = array())
+  {
+    if(!self::check())
+      self::connect();
+
+    $request = $this->client->post($module . '/filter', null, json_encode($params));
+    $result = $request->send()->json();
+
+    return $result;
+  }
+
+
+  /**
   * Function: delete()
   * Parameters: $module = Record Type
   *   $record = The record to delete
