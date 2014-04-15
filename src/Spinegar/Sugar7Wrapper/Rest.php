@@ -233,7 +233,14 @@ class Rest {
     if(!self::check())
       self::connect();
 
-    $request = $this->client->post($module . '/filter', null, json_encode($params));
+    $request = $this->client->get($module . '/filter');
+
+    $query = $request->getQuery();
+    foreach($params as $key=>$value)
+    {
+      $query->add($key, $value);
+    }
+
     $result = $request->send()->json();
 
     return $result;
