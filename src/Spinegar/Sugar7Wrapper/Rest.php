@@ -222,6 +222,32 @@ class Rest {
   }
 
   /**
+   * Function: filter()
+   * Parameters: $module = Module type
+   *   $params = Filter Criteria
+   * Description:   Filter records in this module
+   * Returns: returns a list of module beans if successful, otherwise false
+   */
+  public function filter($module, $params = array())
+  {
+    if(!self::check())
+      self::connect();
+
+    $request = $this->client->get($module . '/filter');
+
+    $query = $request->getQuery();
+    foreach($params as $key=>$value)
+    {
+      $query->add($key, $value);
+    }
+
+    $result = $request->send()->json();
+
+    return $result;
+  }
+
+
+  /**
   * Function: delete()
   * Parameters: $module = Record Type
   *   $record = The record to delete
