@@ -9,6 +9,8 @@ Contents
 1. About
 2. Installation
 3. Usage Example
+4. Custom & Undefined Endpoints
+5. Troubleshooting
 
 
 1.About
@@ -110,4 +112,36 @@ Then install with composer
 	$sugar->deleteFile('Notes', $record_id, 'filename')
 
 	/* Download  the file associated to the filename field of a note to the server */
-	$sugar->download('Notes', $record_id, 'filename', '/path/to/destination');
+	$sugar->download('Notes', $record_id, 'filename', '/path/to/destination.ext');
+
+
+
+4. Custom & Undefined Endpoints
+----------------------------
+Call custom or undefined endpoints using the following methods.
+
+	/* Get Endpoint*/
+	$parameters = array();
+	$sugar->getEndpoint('MyCustomEndpoint', $parameters);
+
+	/* Post Endpoint*/
+	$parameters = array();
+	$sugar->postEndpoint('MyCustomEndpoint', $parameters);
+
+	/* Put Endpoint*/
+	$parameters = array();
+	$sugar->putEndpoint('MyCustomEndpoint', $parameters);
+
+	/* Delete Endpoint*/
+	$parameters = array();
+	$sugar->deleteEndpoint('MyCustomEndpoint', $parameters);
+
+
+
+5. Troubleshooting
+----------------------------
+If you are having trouble connecting to a secured site (https), try the following:
+
+	$sugar = new \Spinegar\Sugar7Wrapper\Rest();
+        	$sugar->setClientOption('verify', false); //This is the important part
+

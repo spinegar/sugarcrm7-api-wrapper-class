@@ -1,71 +1,30 @@
 <?php namespace Spinegar\Sugar7Wrapper;
 
-use Guzzle\Common\Event;
-use Guzzle\Http\Client;
-use Guzzle\Http\Query;
+use Spinegar\Sugar7Wrapper\Clients\Guzzle;
 
 /**
- * SugarCRM 7 REST API Class
+ * SugarCRM 7 Rest Wrapper
  *
- * @package   Sugar7Wrapper
+ * @package   SugarCRM 7 Rest Wrapper
  * @category  Libraries
  * @author  Sean Pinegar
  * @license MIT License
- * @link    https://github.com/spinegar/sugar7wrapper
+ * @link   https://github.com/spinegar/sugarcrm7-api-wrapper-class
  */
 
 class Rest {
 
-  /**
-  * Variable: $username
-  * Description:  A SugarCRM User. 
-  */
-  private $username;
-
-  /**
-  * Variable: $password
-  * Description:  The password for the $username SugarCRM account
-  */
-  private $password;
-
-  /**
-  * Variable: $token
-  * Description:  OAuth 2.0 token
-  */
-  private $token;
-
-  /**
-  * Variable: $client
-  * Description:  Guzzle Client
-  */
-  private $client;
-
+  protected $client;
   /**
   * Function: __construct()
   * Parameters:   none    
   * Description:  Construct Class
   * Returns:  VOID
   */
-  function __construct()
+  public function __construct()
   {
-    $this->client = new Client();
+    $this->client = new Guzzle;
   }
-
-  /**
-  * Function: __destruct()
-  * Parameters:   none    
-  * Description:  OAuth2 Logout
-  * Returns:  TRUE on success, otherwise FALSE
-  */
-  function __destruct()
-  {
-    $request = $this->client->post('oauth2/logout');
-    $request->setHeader('OAuth-Token', $this->token);    
-    $result = $request->send()->json();
-
-    return $result;
-  }
-
   
   /**
   * Function: connect()
@@ -75,26 +34,7 @@ class Rest {
   */
   public function connect()
   {
-    $request = $this->client->post('oauth2/token', null, array(
-        'grant_type' => 'password',
-        'client_id' => 'sugar',
-        'username' => $this->username,
-        'password' => $this->password,
-    ));
-
-    $results = $request->send()->json();
-   
-    if(!$results['access_token'])
-      return false;
-
-    $this->token = $results['access_token'];
-    $token = $this->token;
-    
-    $this->client->getEventDispatcher()->addListener('request.before_send', function(Event $event) use ($token) {
-      $event['request']->setHeader('OAuth-Token', $token);
-    });
-    
-    return true;
+    return $this->client->connect();
   }
 
   /**
@@ -111,41 +51,51 @@ class Rest {
     return true;
   }
 
-  /**
+ /**
   * Function: setClientOptions()
   * Parameters:   $key = Guzzle option, $value = Value  
   * Description:  Set Default options for the Guzzle client.
   * Returns:  returns $this
   */
-  public function setClientOption($key, $value)
-  {
-    $this->client->setDefaultOption($key, $value);
+ public function setClientOption($key, $value)
+ {
+  $this->client->setClientOption($key, $value);
 
-    return $this;
-  }
+  return $this;
+}
 
   /**
   * Function: setUrl()
   * Parameters:   $value = URL for the REST API    
   * Description:  Set $url
-  * Returns:  returns $url
+  * Returns:  returns $this
   */
   public function setUrl($value)
   {
-    $this->client->setBaseUrl($value) ;
+    $this->client->setUrl($value);
 
     return $this;
+  }
+
+  /**
+  * Function: getUrl()
+  * Description:  Get $url
+  * Returns:  returns value if true otherwise FALSE
+  */
+  public function getUrl()
+  {
+    return $this->client->getUrl();
   }
 
   /**
   * Function: setUsername()
   * Parameters:   $value = Username for the REST API User    
   * Description:  Set $username
-  * Returns:  returns $username
+  * Returns:  returns $this
   */
   public function setUsername($value)
   {
-    $this->username = $value;
+    $this->client->setUsername($value);
 
     return $this;
   }
@@ -154,11 +104,11 @@ class Rest {
   * Function: setPassword()
   * Parameters:   none    
   * Description:  Set $password
-  * Returns:  returns $passwrd
+  * Returns:  returns $this
   */
   public function setPassword($value)
   {
-    $this->password = $value;
+    $this->client->setPassword($value);
 
     return $this;
   }
@@ -172,22 +122,23 @@ class Rest {
   */
   public function create($module, $fields)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->post($module, null, $fields);
-    $result = $request->send()->json();
+    $endpoint = $module;
 
-    if(!$result)
+    $request = $this->client->post($endpoint, $fields);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
   * Function: search()
   * Parameters:  $module - The module to work with
-  *   $params = [
+  *   $parameters = [
   *     q - Search the records by this parameter, if you don't have a full-text search engine enabled it will only search the name field of the records.  (Optional)
   *     maxResult - A maximum number of records to return Optional
   *     offset -  How many records to skip over before records are returned (Optional)
@@ -199,26 +150,19 @@ class Rest {
   * Description:  Search records in this module
   * Returns:  returns Object if successful, otherwise FALSE
   */
-  public function search($module, $params = array())
+  public function search($module, $parameters = array())
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    // return $params;
-    $request = $this->client->get($module);
+    $endpoint = $module;
 
-    $query = $request->getQuery();
-    foreach($params as $key=>$value)
-    {
-      $query->add($key, $value);
-    }
+    $request = $this->client->get($endpoint, $parameters);
 
-    $result = $request->send()->json();
-
-    if(!$result)
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -230,37 +174,35 @@ class Rest {
    */
   public function filter($module, $params = array())
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->get($module . '/filter');
+    $endpoint = $module . '/filter';
 
-    $query = $request->getQuery();
-    foreach($params as $key=>$value)
-    {
-      $query->add($key, $value);
-    }
+    $request = $this->client->get($endpoint, $parameters);
 
-    $result = $request->send()->json();
+    if(!$request)
+      return false;
 
-    return $result;
+    return $request;
   }
 
 
-  /**
+   /**
   * Function: delete()
   * Parameters: $module = Record Type
   *   $record = The record to delete
   * Description:  This method deletes a record of the specified type
   * Returns:  returns Object if successful, otherwise FALSE
   */
-  public function delete($module, $record)
-  {
-    if(!self::check())
-      self::connect();
+   public function delete($module, $record)
+   {
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->delete($module . '/' . $record);
-    $result = $request->send();
+    $endpoint = $module . '/' . $record;
+
+    $request = $this->client->delete($endpoint);
 
     if(!$result)
       return false;
@@ -277,16 +219,17 @@ class Rest {
   */
   public function retrieve($module, $record)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->get($module . '/' . $record);
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record;
 
-    if(!$result)
+    $request = $this->client->get($endpoint);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -299,16 +242,17 @@ class Rest {
   */
   public function update($module, $record, $fields)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->put($module . '/' . $record, null, json_encode($fields));
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record;
 
-    if(!$result)
+    $request = $this->client->put($endpoint, $fields);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -320,13 +264,14 @@ class Rest {
   */
   public function favorite($module, $record)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->put($module . '/' . $record . '/favorite');
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/favorite';
 
-    if(!$result)
+    $request = $this->client->put($endpoint);
+
+    if(!$request)
       return false;
 
     return $result;
@@ -341,13 +286,14 @@ class Rest {
   */
   public function unfavorite($module, $record)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->delete($module . '/' . $record . '/favorite');
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/favorite';
 
-    if(!$result)
+    $request = $this->client->delete($endpoint);
+
+    if(!$request)
       return false;
 
     return $result;
@@ -362,16 +308,17 @@ class Rest {
   */
   public function files($module, $record)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->get($module . '/' . $record . '/file');
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/file';
 
-    if(!$result)
+    $request = $this->client->get($endpoint);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -379,18 +326,17 @@ class Rest {
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
   *   $field = Field associated to the file
+  *   $destionationFile = destination file including folders and file extension (e.g. /var/www/html/somefile.zip)
   * Description:  Gets the contents of a single file related to a field for a module record.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  public function download($module, $record, $field, $destination)
+  public function download($module, $record, $field, $destinationFile)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $file = $this->getUrl() . $module . '/' . $record . '/file/' . $field;
-    $request = $this->client->get($module . '/' . $record . '/file/' . $field );
-    $request->setResponseBody($destination);
-    $result = $request->send();
+    $endpoint = $module . '/' . $record . '/file/' . $field;
+    $result = $this->client->getFile($endpoint, $destinationFile);
 
     if(!$result)
       return false;
@@ -399,6 +345,7 @@ class Rest {
   }
 
   /**
+  * ============ NOT WORKING !!!!! =============
   * Function: upload()
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
@@ -412,8 +359,8 @@ class Rest {
   */
   public function upload($module, $record, $field, $path, $params=array())
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $contentType = finfo_file($finfo, $path);
@@ -421,7 +368,7 @@ class Rest {
 
     $request = $this->client->post($module . '/' . $record . '/file/' . $field, array(), $params);
     $request->addPostFile(basename($path), dirname($path), $contentType)
-                  ->send();
+    ->send();
 
     if(!$result)
       return false;
@@ -439,16 +386,17 @@ class Rest {
   */
   public function deleteFile($module, $record, $field)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->delete($module . '/' . $record . '/file/' . $field);
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/file/' . $field;
 
-    if(!$result)
+    $request = $this->client->delete($endpoint);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -461,16 +409,17 @@ class Rest {
   */
   public function related($module, $record, $link)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->get($module . '/' . $record . '/link/' . $link);
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/link/' . $link;
 
-    if(!$result)
+    $request = $this->client->get($endpoint);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -485,16 +434,17 @@ class Rest {
   */
   public function relate($module, $record, $link, $related_record, $fields=array())
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->post($module . '/' . $record . '/link/' . $link . '/' . $related_record, array(), $fields);
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/link/' . $link . '/' . $related_record;
 
-    if(!$result)
+    $request = $this->client->post($endpoint, $fields);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -506,16 +456,17 @@ class Rest {
   */
   public function unrelate($module, $record, $link, $related_record)
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->delete($module . '/' . $record . '/link/' . $link . '/' . $related_record);
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/link/' . $link . '/' . $related_record;
 
-    if(!$result)
+    $request = $this->client->delete($endpoint);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -530,15 +481,96 @@ class Rest {
   */
   public function updateRelationship($module, $record, $link, $related_record, $fields=array())
   {
-    if(!self::check())
-      self::connect();
+    if(!$this->client->check())
+      $this->client->connect();
 
-    $request = $this->client->put($module . '/' . $record . '/link/' . $link . '/' . $related_record, array(), json_encode($fields));
-    $result = $request->send()->json();
+    $endpoint = $module . '/' . $record . '/link/' . $link . '/' . $related_record;
 
-    if(!$result)
+    $request = $this->client->put($endpoint,  $fields);
+
+    if(!$request)
       return false;
 
-    return $result;
+    return $request;
+  }
+
+  /**
+  * Function: getEndpoint()
+  * Parameters: $endpoint = API Endpoint
+  * Parameters: $parameters = parameters to pass to the endpoint
+  * Description:  Call a get endpoint
+  * Returns:  Returns ARRAY if successful, otherwise FALSE
+  */
+  public function getEndpoint($endpoint, $parameters = array())
+  {
+    if(!$this->client->check())
+      $this->client->connect();
+
+    $request = $this->client->get($endpoint, $parameters);
+
+    if(!$request)
+      return false;
+
+    return $request;
+  }
+
+  /**
+  * Function: postEndpoint()
+  * Parameters: $endpoint = API Endpoint
+  * Parameters: $parameters = parameters to pass to the endpoint
+  * Description:  Call a post endpoint
+  * Returns:  Returns ARRAY if successful, otherwise FALSE
+  */
+  public function postEndpoint($endpoint, $parameters = array())
+  {
+    if(!$this->client->check())
+      $this->client->connect();
+
+    $request = $this->client->post($endpoint, $parameters);
+
+    if(!$request)
+      return false;
+
+    return $request;
+  }
+
+  /**
+  * Function: putEndpoint()
+  * Parameters: $endpoint = API Endpoint
+  * Parameters: $parameters = parameters to pass to the endpoint
+  * Description:  Call a put endpoint
+  * Returns:  Returns ARRAY if successful, otherwise FALSE
+  */
+  public function putEndpoint($endpoint, $parameters = array())
+  {
+    if(!$this->client->check())
+      $this->client->connect();
+
+    $request = $this->client->put($endpoint, $parameters);
+
+    if(!$request)
+      return false;
+
+    return $request;
+  }
+
+  /**
+  * Function: deleteEndpoint()
+  * Parameters: $endpoint = API Endpoint
+  * Parameters: $parameters = parameters to pass to the endpoint
+  * Description:  Call a delete endpoint
+  * Returns:  Returns ARRAY if successful, otherwise FALSE
+  */
+  public function deleteEndpoint($endpoint, $parameters = array())
+  {
+    if(!$this->client->check())
+      $this->client->connect();
+
+    $request = $this->client->delete($endpoint, $parameters);
+
+    if(!$request)
+      return false;
+
+    return $request;
   }
 }
