@@ -1,4 +1,4 @@
-SugarCRM REST API Wrapper Class For SugarCRM 7
+SugarCRM REST API Client For SugarCRM 7
 =================================================
 
 License: MIT
@@ -15,7 +15,7 @@ Contents
 
 1.About
 -------
-- PHP wrapper class for interacting with a SugarCRM 7 REST API
+- PHP library interacting with a SugarCRM 7 REST API
 - Designed to work with SugarCRM 7 and the v10 REST API
 
 2. Installation via Composer
