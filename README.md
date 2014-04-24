@@ -1,4 +1,4 @@
-SugarCRM REST API Client For SugarCRM 7
+SugarCRM REST Client For SugarCRM 7
 =================================================
 
 License: MIT
