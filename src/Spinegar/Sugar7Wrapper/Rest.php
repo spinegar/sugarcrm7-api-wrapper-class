@@ -168,11 +168,11 @@ class Rest {
   /**
    * Function: filter()
    * Parameters: $module = Module type
-   *   $params = Filter Criteria
+   *   $parameters = Filter Criteria
    * Description:   Filter records in this module
    * Returns: returns a list of module beans if successful, otherwise false
    */
-  public function filter($module, $params = array())
+  public function filter($module, $parameters = array())
   {
     if(!$this->client->check())
       $this->client->connect();
