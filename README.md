@@ -58,6 +58,13 @@ Then install with composer
 	$sugar->search('Cases', array(
 		'fields' => 'name'
 	)); 
+	
+	/* Retrieve all records with filter params in the Contacts module */
+	$sugar->filter('Contacts', array(
+	    'filter' => array(
+	        array('first_name' => 'First Name'),
+	    )
+	));
 
 	/* Retrieve a specific record from the Cases module */
 	$sugar->retrieve('Cases', $record_id);
