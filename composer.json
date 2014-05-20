@@ -9,7 +9,7 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "guzzle/guzzle": "v3.8.0"
+        "guzzle/guzzle": "v3.8.1"
     },
     "autoload": {
         "psr-0": {
