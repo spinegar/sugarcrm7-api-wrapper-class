@@ -192,7 +192,7 @@ class Rest {
    * Parameters: $module = Module type
    *   $parameters = Filter Criteria
    * Description:   Count records in this module
-   * Returns: returns a records quantity
+   * Returns: returns the records quantity
    */
   public function countRecords($module, $parameters = array())
   {
