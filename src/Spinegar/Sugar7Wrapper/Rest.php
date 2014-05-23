@@ -187,6 +187,27 @@ class Rest {
     return $request;
   }
 
+  /**
+   * Function: countRecords()
+   * Parameters: $module = Module type
+   *   $parameters = Filter Criteria
+   * Description:   Count records in this module
+   * Returns: returns the records quantity
+   */
+  public function countRecords($module, $parameters = array())
+  {
+    if(!$this->client->check())
+      $this->client->connect();
+
+    $endpoint = $module . '/count';
+
+    $request = $this->client->get($endpoint, $parameters);
+
+    if(!$request)
+      return false;
+
+    return $request;
+  }
 
    /**
   * Function: delete()
