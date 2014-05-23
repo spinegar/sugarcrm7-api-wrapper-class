@@ -66,6 +66,13 @@ Then install with composer
 	    )
 	));
 
+	/* Count all records with filter params in the Cases module */
+	$sugar->countRecords('Cases', array(
+	    'filter' => array(
+	        array('status' => 'New'),
+	    )
+	));
+
 	/* Retrieve a specific record from the Cases module */
 	$sugar->retrieve('Cases', $record_id);
 
