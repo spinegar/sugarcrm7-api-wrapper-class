@@ -60,17 +60,8 @@ class Guzzle implements ClientInterface {
   /**
   * Function: __destruct()
   * Parameters:   none    
-  * Description:  OAuth2 Logout
-  * Returns:  TRUE on success, otherwise FALSE
   */
-  function __destruct()
-  {    
-    $request = $this->client->post('oauth2/logout');
-    $request->setHeader('OAuth-Token', $this->token);    
-    $result = $request->send()->json();
-
-    return $result;
-  }
+  function __destruct(){}
 
   
   /**
