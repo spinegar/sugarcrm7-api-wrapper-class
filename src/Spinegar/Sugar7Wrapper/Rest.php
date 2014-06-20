@@ -366,7 +366,6 @@ class Rest {
   }
 
   /**
-  * ============ NOT WORKING !!!!! =============
   * Function: upload()
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
@@ -387,9 +386,9 @@ class Rest {
     $contentType = finfo_file($finfo, $path);
     finfo_close($finfo);
 
-    $request = $this->client->post($module . '/' . $record . '/file/' . $field, array(), $params);
-    $request->addPostFile(basename($path), dirname($path), $contentType)
-    ->send();
+    $request = $this->client->put($module . '/' . $record . '/file/' . $field, array(), $params);
+    $request->setBody(file_get_contents($path));
+    $result = $request->send();
 
     if(!$result)
       return false;
