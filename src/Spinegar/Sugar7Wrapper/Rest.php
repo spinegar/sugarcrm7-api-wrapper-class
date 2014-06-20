@@ -366,7 +366,6 @@ class Rest {
   }
 
   /**
-  * ============ NOT WORKING !!!!! =============
   * Function: upload()
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
