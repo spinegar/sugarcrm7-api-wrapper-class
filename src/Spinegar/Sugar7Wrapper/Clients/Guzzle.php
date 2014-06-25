@@ -77,6 +77,7 @@ class Guzzle implements ClientInterface {
         'client_id' => 'sugar',
         'username' => $this->username,
         'password' => $this->password,
+        'platform' => 'api',
     ));
 
     $result = $request->send()->json();
