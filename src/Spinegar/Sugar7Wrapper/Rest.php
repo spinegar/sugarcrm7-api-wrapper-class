@@ -45,10 +45,7 @@ class Rest {
   */
   public function check()
   {
-    if(!$this->token)
-      return false;
-
-    return true;
+    return $this->client->check();
   }
 
  /**
