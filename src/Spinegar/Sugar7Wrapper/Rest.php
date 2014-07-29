@@ -137,7 +137,7 @@ class Rest {
   * Parameters:  $module - The module to work with
   *   $parameters = [
   *     q - Search the records by this parameter, if you don't have a full-text search engine enabled it will only search the name field of the records.  (Optional)
-  *     maxResult - A maximum number of records to return Optional
+  *     max_num - A maximum number of records to return Optional
   *     offset -  How many records to skip over before records are returned (Optional)
   *     fields -  Comma delimited list of what fields you want returned. The field date_modified will always be added  (Optional)
   *     order_by -  How to sort the returned records, in a comma delimited list with the direction appended to the column name after a colon. Example: last_name:DESC,first_name:DESC,date_modified:ASC (Optional)
