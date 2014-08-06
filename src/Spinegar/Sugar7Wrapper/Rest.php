@@ -590,4 +590,25 @@ class Rest {
 
     return $request;
   }
+  
+    /**
+  * Function: me()
+  * Parameters: 
+  * Description:  This method retrieves current user
+  * Returns:  Returns an Array if successful, otherwise FALSE
+  */
+  public function me()
+  {
+    if(!$this->client->check())
+      $this->client->connect();
+
+    $endpoint = 'me';
+
+    $request = $this->client->get($endpoint);
+
+    if(!$request)
+      return false;
+
+    return $request;
+  }
 }
