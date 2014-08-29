@@ -222,7 +222,7 @@ class Rest {
 
     $request = $this->client->delete($endpoint);
 
-    if(!$result)
+    if(!$request)
       return false;
 
     return true;
