@@ -128,6 +128,8 @@ Then install with composer
 	/* Download  the file associated to the filename field of a note to the server */
 	$sugar->download('Notes', $record_id, 'filename', '/path/to/destination.ext');
 
+	/* Upload a file associated to the filename field of a note to the server */
+	$sugar->upload('Notes', $record_id, 'filename', '/path/of/local/file.ext');
 
 
 4. Custom & Undefined Endpoints

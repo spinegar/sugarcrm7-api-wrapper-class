@@ -366,26 +366,25 @@ class Rest {
   * Function: upload()
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
-  *   $params = [
-  *     format - sugar-html-json (Required),
-  *     delete_if_fails - Boolean indicating whether the API is to mark related record deleted if the file upload fails.  Optional (if used oauth_token is also required)
-  *     oauth_token - oauth_token_value Optional (Required if delete_if_fails is true)
-  *   ]
+  *   $field = Field associated to the file
+  *   $sourceFilePath = local path of file to be uploaded (e.g. /var/www/html/path/of/local/file.ext)
   * Description:  Saves a file. The file can be a new file or a file override.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  public function upload($module, $record, $field, $path, $params=array())
+  public function upload($module, $record, $field, $sourceFilePath)
   {
     if(!$this->client->check())
       $this->client->connect();
 
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $contentType = finfo_file($finfo, $path);
-    finfo_close($finfo);
+    $endpoint = $module . '/' . $record . '/file/' . $field;
 
-    $request = $this->client->put($module . '/' . $record . '/file/' . $field, array(), $params);
-    $request->setBody(file_get_contents($path));
-    $result = $request->send();
+    $parameters = array(
+      "format"          => "sugar-html-json",
+      "delete_if_fails" => true,
+      "$field"          => "@" . $sourceFilePath,
+    );
+
+    $result = $this->client->postFile($endpoint, $parameters);
 
     if(!$result)
       return false;
