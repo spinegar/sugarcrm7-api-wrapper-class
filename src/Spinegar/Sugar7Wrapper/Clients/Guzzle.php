@@ -264,6 +264,29 @@ class Guzzle implements ClientInterface {
   }
 
   /**
+  * Function: postFile()
+  * Parameters: 
+  *   $endpoint = endpoint per API specs
+  *   $parameters = Parameters per API specs
+  * Description:  Calls the API via HTTP POST without JSON and with special header
+  * Returns:  Returns an Array if successful, otherwise FALSE
+  */
+  public function postFile($endpoint, $parameters = array())
+  {
+    if(!self::check())
+      self::connect();
+
+    $request = $this->client->post($endpoint, array(), $parameters);
+    $request->setHeader('Content-Type', 'multipart/form-data');
+    $result = $request->send();
+
+    if(!$result)
+      return false;
+
+    return $result;
+  }
+
+  /**
   * Function: post()
   * Parameters: 
   *   $endpoint = endpoint per API specs
