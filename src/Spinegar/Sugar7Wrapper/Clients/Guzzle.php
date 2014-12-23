@@ -75,6 +75,7 @@ class Guzzle implements ClientInterface {
     $request = $this->client->post('oauth2/token', null, array(
         'grant_type' => 'password',
         'client_id' => 'sugar',
+        'client_secret' => '',
         'username' => $this->username,
         'password' => $this->password,
         'platform' => 'api',
