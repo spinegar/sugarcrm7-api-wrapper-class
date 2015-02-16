@@ -3,7 +3,6 @@
 use Guzzle\Common\Event;
 use Guzzle\Http\Client;
 use Guzzle\Http\Query;
-
 /**
  * SugarCRM 7 Rest Client
  *
@@ -63,14 +62,13 @@ class Guzzle implements ClientInterface {
   */
   function __destruct(){}
 
-  
   /**
-  * Function: connect()
-  * Parameters:   none    
-  * Description:  Authenticate and set the oAuth 2.0 token
-  * Returns:  TRUE on login success, otherwise FALSE
-  */
-  public function connect()
+   * Function: getNewAuthToken
+   * Parameters: none
+   * Description: Retrieve access token from OAuth server
+   * Returns: token on success, otherwise null
+   */
+  public function getNewAuthToken()
   {
     $request = $this->client->post('oauth2/token', null, array(
         'grant_type' => 'password',
@@ -82,17 +80,28 @@ class Guzzle implements ClientInterface {
     ));
 
     $result = $request->send()->json();
-   
-    if(!$result['access_token'])
-      return false;
+    return $result['access_token'];
+  }
 
-    $token = $result['access_token'];
+  /**
+  * Function: connect()
+  * Parameters:   none    
+  * Description:  Authenticate and set the oAuth 2.0 token
+  * Returns:  TRUE on login success, otherwise FALSE
+  */
+  public function connect()
+  {
+    $token = $this->getNewAuthToken();
+
+    if (!$token) {
+      return false;
+    }
+
     self::setToken($token);
-    
-    $this->client->getEventDispatcher()->addListener('request.before_send', function(Event $event) use ($token) {
-      $event['request']->setHeader('OAuth-Token', $token);
-    });
-    
+    $eventDispatcher = $this->client->getEventDispatcher();
+    $eventDispatcher->addListener('request.before_send', array($this, 'beforeSendRequest'));
+    $eventDispatcher->addListener('request.error', array($this, 'refreshToken'));
+
     return true;
   }
 
@@ -351,5 +360,34 @@ class Guzzle implements ClientInterface {
       return false;
 
     return $response;
+  }
+
+  /**
+   * Function: refreshToken()
+   * Parameters:
+   *    $event = Guzzle\Commmon\Event
+   * Description: Attempts to reconnect with new token on 401
+   * Returns: VOID
+   */
+  public function refreshToken(Event $event)
+  {
+    if ($event['response']->getStatusCode() === 401) {
+      $this->setToken($this->getNewAuthToken());
+
+      $event['response'] = $event['request']->send();
+      $event->stopPropagation();
+    }
+  }
+
+  /**
+   * Function: beforeSendRequest()
+   * Parameters:
+   *    $event = Guzzle\Common\Event
+   * Description: Add oauth token to header on each request
+   * Returns: VOID
+   */
+  public function beforeSendRequest(Event $event)
+  {
+    $event['request']->setHeader('OAuth-Token', $this->token);
   }
 }
