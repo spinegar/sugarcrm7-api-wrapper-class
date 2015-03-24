@@ -50,6 +50,13 @@ $sugar->setUrl('https://sugar/rest/v10/')
 	->setPassword('password')
 	->connect();
 
+/* Instantiate and authenticate for a specific platform*/
+$sugar->setUrl('https://sugar/rest/v10/')
+    ->setUsername('restUser')
+    ->setPassword('password')
+    ->setPlatform('mobile')
+    ->connect();
+
 /* Retrieve all records in the Cases module */
 $sugar->search('Cases');
 

@@ -111,6 +111,29 @@ class Rest {
   }
 
   /**
+  * Function: setPlatform()
+  * Parameters:   $value = platform for the REST API    
+  * Description:  Set $platform
+  * Returns:  returns $this
+  */
+  public function setPlatform($value)
+  {
+    $this->client->setPlatform($value);
+
+    return $this;
+  }
+
+  /**
+  * Function: getPlatform()
+  * Description:  Get $platform
+  * Returns:  returns value if true otherwise FALSE
+  */
+  public function getPlatform()
+  {
+    return $this->client->getPlatform();
+  }
+
+  /**
   * Function: create()
   * Parameters:   $module = Record Type
   *   $fields = Record field values    

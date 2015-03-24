@@ -11,6 +11,8 @@ interface ClientInterface {
 
     public function setUrl($url);
 
+    public function setPlatform($platform);
+
     public function setClientOption($key, $value);
 
     public function get($endpoint, $paramters);
