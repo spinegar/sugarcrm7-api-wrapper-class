@@ -34,6 +34,12 @@ class Guzzle implements ClientInterface {
   private $password;
 
   /**
+  * Variable: $platform
+  * Description:  A Sugar Instance. 
+  */
+  private $platform = 'api';
+
+  /**
   * Variable: $token
   * Description:  OAuth 2.0 token
   */
@@ -76,7 +82,7 @@ class Guzzle implements ClientInterface {
         'client_secret' => '',
         'username' => $this->username,
         'password' => $this->password,
-        'platform' => 'api',
+        'platform' => $this->platform,
     ));
 
     $result = $request->send()->json();
@@ -192,6 +198,32 @@ class Guzzle implements ClientInterface {
     $this->password = $value;
 
     return true;
+  }
+
+  /**
+  * Function: setPlatform()
+  * Parameters:   $value = URL for the REST API    
+  * Description:  Set $platform
+  * Returns:  returns FALSE is falsy, otherwise TRUE
+  */
+  public function setPlatform($value)
+  {
+    if(!$value)
+      return false;
+
+    $this->platform = $value;
+
+    return true;
+  }
+
+  /**
+  * Function: getPlatform()
+  * Description:  Set $platform
+  * Returns:  returns a value if successful, otherwise FALSE
+  */
+  public function getPlatform()
+  {
+    return $this->platform;
   }
 
   /**
