@@ -443,17 +443,18 @@ class Rest {
   * Parameters: $module = Record Type
   *   $record = The record we are working with
   *   $link = The link for the relationship
+  *   $parameters = Request arguments, see the documentation for GET /<module>/:record/link/:link_name on https://<your sugarcrm domain>/rest/v10/help
   * Description:  This method retrieves a list of records from the specified link
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  public function related($module, $record, $link)
+  public function related($module, $record, $link, $parameters = array())
   {
     if(!$this->client->check())
       $this->client->connect();
 
     $endpoint = $module . '/' . $record . '/link/' . $link;
 
-    $request = $this->client->get($endpoint);
+    $request = $this->client->get($endpoint, $parameters);
 
     if(!$request)
       return false;
