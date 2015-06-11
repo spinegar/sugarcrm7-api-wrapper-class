@@ -2,7 +2,6 @@
 
 use Guzzle\Common\Event;
 use Guzzle\Http\Client;
-use Guzzle\Http\Query;
 /**
  * SugarCRM 7 Rest Client
  *
