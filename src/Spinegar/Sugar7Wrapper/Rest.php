@@ -315,7 +315,7 @@ class Rest {
     if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -337,7 +337,7 @@ class Rest {
     if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
