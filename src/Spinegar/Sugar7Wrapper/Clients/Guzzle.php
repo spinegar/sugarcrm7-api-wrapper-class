@@ -2,7 +2,6 @@
 
 use Guzzle\Common\Event;
 use Guzzle\Http\Client;
-use Guzzle\Http\Query;
 /**
  * SugarCRM 7 Rest Client
  *
@@ -276,7 +275,7 @@ class Guzzle implements ClientInterface {
   * Function: get()
   * Parameters: 
   *   $endpoint = endpoint per API specs
-  *   $destinationFile = destination file including folders and file extension (e.g. /var/www/html/somefile.zip)
+  *   $destinationFile = destination file including folders and file extension (e.g. /var/www/html/someFile.zip)
   *   $parameters = Parameters per API specs
   * Description:  Calls the API via HTTP GET
   * Returns:  Returns an Array if successful, otherwise FALSE
@@ -397,7 +396,7 @@ class Guzzle implements ClientInterface {
   /**
    * Function: refreshToken()
    * Parameters:
-   *    $event = Guzzle\Commmon\Event
+   *    $event = Guzzle\Common\Event
    * Description: Attempts to reconnect with new token on 401
    * Returns: VOID
    */

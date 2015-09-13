@@ -160,11 +160,11 @@ class Rest {
   * Parameters:  $module - The module to work with
   *   $parameters = [
   *     q - Search the records by this parameter, if you don't have a full-text search engine enabled it will only search the name field of the records.  (Optional)
-  *     max_num - A maximum number of records to return Optional
+  *     max_num - A maximum number of records to return (Optional)
   *     offset -  How many records to skip over before records are returned (Optional)
   *     fields -  Comma delimited list of what fields you want returned. The field date_modified will always be added  (Optional)
   *     order_by -  How to sort the returned records, in a comma delimited list with the direction appended to the column name after a colon. Example: last_name:DESC,first_name:DESC,date_modified:ASC (Optional)
-  *     favorites - Only fetch favorite records (Optionall)
+  *     favorites - Only fetch favorite records (Optional)
   *     deleted - Show deleted records in addition to undeleted records (Optional)
   *   ]
   * Description:  Search records in this module
@@ -315,7 +315,7 @@ class Rest {
     if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -337,7 +337,7 @@ class Rest {
     if(!$request)
       return false;
 
-    return $result;
+    return $request;
   }
 
   /**
@@ -367,7 +367,7 @@ class Rest {
   * Parameters: $module = Record Type
   *   $record = The record  we are working with
   *   $field = Field associated to the file
-  *   $destionationFile = destination file including folders and file extension (e.g. /var/www/html/somefile.zip)
+  *   $destinationFile = destination file including folders and file extension (e.g. /var/www/html/someFile.zip)
   * Description:  Gets the contents of a single file related to a field for a module record.
   * Returns:  Returns an Array if successful, otherwise FALSE
   */

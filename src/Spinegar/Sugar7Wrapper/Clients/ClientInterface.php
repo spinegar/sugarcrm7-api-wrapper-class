@@ -15,11 +15,11 @@ interface ClientInterface {
 
     public function setClientOption($key, $value);
 
-    public function get($endpoint, $paramters);
+    public function get($endpoint, $parameters);
 
-    public function post($endpoint, $paramters);
+    public function post($endpoint, $parameters);
 
-    public function put($endpoint, $paramters);
+    public function put($endpoint, $parameters);
 
-    public function delete($endpoint, $paramters);
+    public function delete($endpoint, $parameters);
 }
