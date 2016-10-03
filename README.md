@@ -172,5 +172,5 @@ If you are having trouble connecting to a secured site (https), try the followin
 
 ```php
 $sugar = new \Spinegar\Sugar7Wrapper\Rest();
-$sugar->setClientOption('verify', false); // This is the important part
+$sugar->setClientOption('verify', false);
 ```
