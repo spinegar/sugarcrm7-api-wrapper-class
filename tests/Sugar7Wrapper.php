@@ -9,7 +9,7 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
     private $host = 'https://sugar/rest/v10/';
     private $username = 'username';
     private $password = 'password';
-
+    
     function __construct()
     {
         $this->client = new Rest();
@@ -227,5 +227,22 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($res));
         $this->assertTrue(array_key_exists('record_count', $res));
         $this->assertTrue(is_numeric($res['record_count']));
+    }
+
+    public function testMultipleRequests()
+    {
+        $results = $this->client->send(function($client){
+            return [
+                $client->countRecords('Cases'),
+                $client->countRecords('Cases'),
+                $client->countRecords('Cases'),
+            ];
+        });
+
+        foreach($results as $res) {
+            $this->assertTrue(is_array($res));
+            $this->assertTrue(array_key_exists('record_count', $res));
+            $this->assertTrue(is_numeric($res['record_count']));
+        }
     }
 }
