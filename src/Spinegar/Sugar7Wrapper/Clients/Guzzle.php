@@ -257,8 +257,19 @@ class Guzzle implements ClientInterface {
         $this->resolve = false;
         $results =  $this->client->send($callback($api));
         $this->resolve = true;
-        $results = array_filter($results, function($response){ return $response; });
-        return array_map(function($response) { return $response->json(); }, $results);
+        return array_map(function($response) {
+
+          if (!$response) {
+            return false;
+          }
+
+          try {
+              return $response->json(); 
+          } catch (Exception $e) {
+            return false;
+          }
+          
+          }, $results);
 
     }
 
@@ -321,6 +332,10 @@ class Guzzle implements ClientInterface {
 
     $request->setResponseBody($destinationFile);
 
+    if (!$this->resolve) {
+      return $request;
+    }
+
     $response = $request->send();
 
     if(!$response)
@@ -344,6 +359,11 @@ class Guzzle implements ClientInterface {
 
     $request = $this->client->post($endpoint, array(), $parameters);
     $request->setHeader('Content-Type', 'multipart/form-data');
+
+    if (!$this->resolve) {
+      return $request;
+    }
+
     $result = $request->send();
 
     if(!$result)
