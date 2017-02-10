@@ -141,6 +141,15 @@ $sugar->download('Notes', $record_id, 'filename', '/path/to/destination.ext');
 
 /* Upload a file associated to the filename field of a note to the server */
 $sugar->upload('Notes', $record_id, 'filename', '/path/of/local/file.ext');
+
+/* Sending multiple requests */
+$results = $this->client->send(function($client){
+	return [
+		$client->countRecords('Cases'),
+		$client->countRecords('Cases'),
+		$client->countRecords('Cases'),
+	];
+});
 ```
 
 4. Custom & Undefined Endpoints

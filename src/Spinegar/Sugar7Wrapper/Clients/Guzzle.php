@@ -51,6 +51,12 @@ class Guzzle implements ClientInterface {
   protected $client;
 
   /**
+  * Variable: $resolve
+  * Description:  Determines if request should be made immediately or request object returned. used for multi request.
+  */
+  protected $resolve = true;
+
+  /**
   * Function: __construct()
   * Parameters:   none    
   * Description:  Construct Class
@@ -240,6 +246,32 @@ class Guzzle implements ClientInterface {
 
     return true;
   }
+/**
+  * Function: send()
+  * Parameters:   $callback = function(Rest $client): Array<Request>, Rest $api       
+  * Description:  send multiple requests with curl_multi_exec
+  * Returns:  ARRAY of response arrays
+  */
+    public function send($callback, $api)
+    {
+        $this->resolve = false;
+        $results =  $this->client->send($callback($api));
+        $this->resolve = true;
+        return array_map(function($response) {
+
+          if (!$response) {
+            return false;
+          }
+
+          try {
+              return $response->json(); 
+          } catch (Exception $e) {
+            return false;
+          }
+          
+          }, $results);
+
+    }
 
   /**
   * Function: get()
@@ -261,6 +293,10 @@ class Guzzle implements ClientInterface {
     foreach($parameters as $key=>$value)
     {
       $query->add($key, $value);
+    }
+
+    if (!$this->resolve) {
+      return $request;
     }
 
     $response = $request->send()->json();
@@ -296,6 +332,10 @@ class Guzzle implements ClientInterface {
 
     $request->setResponseBody($destinationFile);
 
+    if (!$this->resolve) {
+      return $request;
+    }
+
     $response = $request->send();
 
     if(!$response)
@@ -319,6 +359,11 @@ class Guzzle implements ClientInterface {
 
     $request = $this->client->post($endpoint, array(), $parameters);
     $request->setHeader('Content-Type', 'multipart/form-data');
+
+    if (!$this->resolve) {
+      return $request;
+    }
+
     $result = $request->send();
 
     if(!$result)
@@ -341,6 +386,11 @@ class Guzzle implements ClientInterface {
       self::connect();
 
     $request = $this->client->post($endpoint, null, json_encode($parameters));
+
+    if (!$this->resolve) {
+      return $request;
+    }
+
     $response = $request->send()->json();
 
     if(!$response)
@@ -363,6 +413,11 @@ class Guzzle implements ClientInterface {
       self::connect();
 
     $request = $this->client->put($endpoint, null, json_encode($parameters));
+
+    if (!$this->resolve) {
+      return $request;
+    }
+
     $response = $request->send()->json();
 
     if(!$response)
@@ -384,6 +439,11 @@ class Guzzle implements ClientInterface {
       self::connect();
 
     $request = $this->client->delete($endpoint);
+
+    if (!$this->resolve) {
+      return $request;
+    }
+    
     $response = $request->send()->json();
 
 

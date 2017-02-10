@@ -37,6 +37,17 @@ class Rest {
     return $this->client->connect();
   }
 
+ /**
+  * Function: send()
+  * Parameters:   $callback = function(Rest $client): Array<Request>    
+  * Description:  send multiple requests with curl_multi_exec
+  * Returns:  ARRAY of response arrays
+  */
+  public function send($callback)
+  {
+      return $this->client->send($callback, $this);
+  }
+
   /**
   * Function: check()
   * Parameters:   none    
