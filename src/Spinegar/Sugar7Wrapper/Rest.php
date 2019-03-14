@@ -1,7 +1,5 @@
 <?php namespace Spinegar\Sugar7Wrapper;
 
-use Spinegar\Sugar7Wrapper\Clients\Guzzle;
-
 /**
  * SugarCRM 7 Rest Wrapper
  *
@@ -15,6 +13,7 @@ use Spinegar\Sugar7Wrapper\Clients\Guzzle;
 class Rest {
 
   protected $client;
+
   /**
   * Function: __construct()
   * Parameters:   none    
@@ -23,7 +22,7 @@ class Rest {
   */
   public function __construct()
   {
-    $this->client = new Guzzle;
+    $this->client = new \Spinegar\Sugar7Wrapper\Clients\Guzzle;
   }
   
   /**
@@ -37,17 +36,6 @@ class Rest {
     return $this->client->connect();
   }
 
- /**
-  * Function: send()
-  * Parameters:   $callback = function(Rest $client): Array<Request>    
-  * Description:  send multiple requests with curl_multi_exec
-  * Returns:  ARRAY of response arrays
-  */
-  public function send($callback)
-  {
-      return $this->client->send($callback, $this);
-  }
-
   /**
   * Function: check()
   * Parameters:   none    
@@ -59,18 +47,18 @@ class Rest {
     return $this->client->check();
   }
 
- /**
-  * Function: setClientOptions()
-  * Parameters:   $key = Guzzle option, $value = Value  
-  * Description:  Set Default options for the Guzzle client.
-  * Returns:  returns $this
-  */
- public function setClientOption($key, $value)
- {
-  $this->client->setClientOption($key, $value);
-
-  return $this;
-}
+  /**
+   * Function: setClientOption()
+   * Parameters:   $key = Guzzle option, $value = Value  
+   * Description:  Set Default options for the Guzzle client.
+   * Returns:  returns $this
+   */
+  public function setClientOption($key, $value)
+  {
+    $this->client->setClientOption($key, $value);
+   
+    return $this;
+  }
 
   /**
   * Function: setUrl()
