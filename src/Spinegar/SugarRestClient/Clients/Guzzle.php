@@ -371,7 +371,7 @@ class Guzzle implements ClientInterface {
 
     // Is returning the response the correct action here? The original one
     // returned an array of responses if I groked the Guzzle code correctly.
-    return $this->getClient()->request('POST', $endpoint, $parameters, false);
+    return $this->request('POST', $endpoint, $parameters, false);
   }
 
   /**
@@ -384,7 +384,7 @@ class Guzzle implements ClientInterface {
   */
   public function post($endpoint, $parameters = array())
   {
-    return $this->getClient()->request('POST', $endpoint,
+    return $this->request('POST', $endpoint,
         array('json' => $parameters));
   }
   
@@ -398,7 +398,7 @@ class Guzzle implements ClientInterface {
   */
   public function put($endpoint, $parameters = array())
   {
-    return $this->getClient()->request('PUT', $endpoint,
+    return $this->request('PUT', $endpoint,
         array('json' => $parameters));
   }
 
@@ -411,6 +411,6 @@ class Guzzle implements ClientInterface {
   */
   public function delete($endpoint, $parameters = array())
   {
-    return $this->getClient()->request('DELETE', $endpoint);
+    return $this->request('DELETE', $endpoint);
   }
 }
