@@ -10,6 +10,9 @@ class RestClientTest extends TestCase
     private $host = 'https://host/rest/v11/';
     private $username = '';
     private $password = '';
+    private $platform = 'api';
+
+    private $testGeneratedRecords = [];
 
     function setUp(): void
     {
@@ -19,7 +22,24 @@ class RestClientTest extends TestCase
         $this->client->setUrl($this->host)
             ->setUsername($this->username)
             ->setPassword($this->password)
+            ->setPlatform($this->platform)
             ->connect();
+
+    }
+
+    function tearDown(): void
+    {
+        parent::tearDown();
+
+        forEach($this->testGeneratedRecords as &$record) {
+            $res = $this->client->delete($record->module, $record->id);
+
+            if($res) {
+                print('teardown successful for ' . json_encode($record));
+            } else {
+                print('teardown unsuccessful for ' . json_encode($record));
+            }
+        }
 
     }
 
@@ -50,8 +70,6 @@ class RestClientTest extends TestCase
         $this->assertArrayHasKey('modified_by_name', $record);
         $this->assertArrayHasKey('created_by', $record);
         $this->assertArrayHasKey('created_by_name', $record);
-        $this->assertArrayHasKey('doc_owner', $record);
-        $this->assertArrayHasKey('user_favorites', $record);
         $this->assertArrayHasKey('description', $record);
         $this->assertArrayHasKey('deleted', $record);
         $this->assertArrayHasKey('assigned_user_id', $record);
@@ -104,6 +122,25 @@ class RestClientTest extends TestCase
         $this->assertTrue(array_key_exists('id', $res));
         $this->assertTrue('Unit Test Case' === $res['name']);
         $this->assertTrue('Assigned' === $res['status']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $res['id']);
+    }
+
+    public function testDeleteCase()
+    {
+        $name = 'Unit Test Case ' . time();
+
+        $post = $this->client->create('Cases', array(
+            'name' => $name,
+            'status' => 'Assigned'
+        ));
+
+        $this->assertTrue(array_key_exists('id', $post));
+        $this->assertTrue($name === $post['name']);
+        $this->assertTrue('Assigned' === $post['status']);
+
+        $delete = $this->client->delete('Cases', $post['id']);
+        $this->assertTrue($delete);
     }
 
     public function testGetCaseById()
@@ -119,6 +156,8 @@ class RestClientTest extends TestCase
         $this->assertTrue(array_key_exists('name', $res));
         $this->assertTrue('Unit Test Case' === $res['name']);
         $this->assertTrue($res['name'] === $case['name']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $res['id']);
     }
 
     public function testUpdateCase()
@@ -137,6 +176,8 @@ class RestClientTest extends TestCase
         $this->assertTrue($res['id'] === $case['id']);
         $this->assertTrue(array_key_exists('name', $res));
         $this->assertTrue('Unit Test Case Updated' === $case['name']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $res['id']);
     }
 
     public function testFavoriteCase()
@@ -148,22 +189,27 @@ class RestClientTest extends TestCase
         $case = $this->client->favorite('Cases', $res['id']);
 
         $this->assertTrue($case['my_favorite']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $res['id']);
     }
 
     public function testUnfavoriteCase()
     {
+        $name = 'Unit Test Case ' . time();
+
         $case = $this->client->create('Cases', array(
-            'name' => 'Unit Test Case',
-            'my_favorite' => true
+            'name' => $name
         ));
 
-        $this->assertTrue($case['my_favorite']);
+        $favorite = $this->client->favorite('Cases', $case['id']);
 
-        $case = $this->client->update('Cases', $case['id'], array(
-            'my_favorite' => false
-        ));
+        $this->assertTrue($favorite['my_favorite']);
 
-        $this->assertFalse($case['my_favorite']);
+        $unfavorite = $this->client->unfavorite('Cases', $case['id']);
+
+        $this->assertFalse($unfavorite['my_favorite']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $case['id']);
     }
 
     public function testRelateCaseToAccount()
@@ -188,6 +234,9 @@ class RestClientTest extends TestCase
 
         $this->assertArrayHasKey('id', $record);
         $this->assertTrue($record['id'] === $case['id']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $case['id']);
+        $this->testGeneratedRecords[] = (object) array('module' => 'Accounts', 'id' => $account['id']);
     }
 
     public function testUnrelateCaseToAccount()
@@ -222,6 +271,9 @@ class RestClientTest extends TestCase
         $this->assertTrue(is_array($cases['records']));
 
         $this->assertTrue(count($cases['records']) === 0);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $case['id']);
+        $this->testGeneratedRecords[] = (object) array('module' => 'Accounts', 'id' => $account['id']);
     }
 
     public function testCountOfRecords()
@@ -233,20 +285,87 @@ class RestClientTest extends TestCase
         $this->assertTrue(is_numeric($res['record_count']));
     }
 
-    public function testMultipleRequests()
+    public function testPostEndpoint()
     {
-        $results = $this->client->send(function($client){
-            return [
-                $client->countRecords('Cases'),
-                $client->countRecords('Cases'),
-                $client->countRecords('Cases'),
-            ];
-        });
+        $name = 'Unit Test Case ' . time();
 
-        foreach($results as $res) {
-            $this->assertTrue(is_array($res));
-            $this->assertTrue(array_key_exists('record_count', $res));
-            $this->assertTrue(is_numeric($res['record_count']));
-        }
+        $res = $this->client->postEndpoint('Cases', array(
+            'name' => $name,
+            'status' => 'Assigned'
+        ));
+
+        $this->assertTrue(array_key_exists('id', $res));
+        $this->assertTrue($name === $res['name']);
+        $this->assertTrue('Assigned' === $res['status']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $res['id']);
+    }
+
+    public function testGetEndpoint()
+    {
+        $name = 'Unit Test Case ' . time();
+
+        $post = $this->client->postEndpoint('Cases', array(
+            'name' => $name,
+            'status' => 'Assigned'
+        ));
+
+        $this->assertTrue(array_key_exists('id', $post));
+        $this->assertTrue($name === $post['name']);
+        $this->assertTrue('Assigned' === $post['status']);
+
+        $get = $this->client->getEndpoint('Cases/' . $post['id']);
+
+        $this->assertTrue(array_key_exists('id', $get));
+        $this->assertTrue($name === $get['name']);
+        $this->assertTrue('Assigned' === $get['status']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $post['id']);
+    }
+
+    public function testPutEndpoint()
+    {
+        $name = 'Unit Test Case ' . time();
+
+        $post = $this->client->postEndpoint('Cases', array(
+            'name' => $name,
+            'status' => 'Assigned'
+        ));
+
+        $this->assertTrue(array_key_exists('id', $post));
+        $this->assertTrue($name === $post['name']);
+        $this->assertTrue('Assigned' === $post['status']);
+
+        $put = $this->client->putEndpoint('Cases/' . $post['id'],  array(
+            'name' => $name,
+            'status' => 'Assigned',
+            'description' => 'Updated desc'
+        ));
+
+        $this->assertTrue(array_key_exists('id', $put));
+        $this->assertTrue($name === $put['name']);
+        $this->assertTrue('Assigned' === $put['status']);
+        $this->assertTrue('Updated desc' === $put['description']);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Cases', 'id' => $post['id']);
+    }
+
+    public function testDeleteEndpoint()
+    {
+        $name = 'Unit Test Case ' . time();
+
+        $post = $this->client->postEndpoint('Cases', array(
+            'name' => $name,
+            'status' => 'Assigned'
+        ));
+
+        $this->assertTrue(array_key_exists('id', $post));
+        $this->assertTrue($name === $post['name']);
+        $this->assertTrue('Assigned' === $post['status']);
+
+        $delete = $this->client->deleteEndpoint('Cases/' . $post['id']);
+
+        $this->assertTrue(array_key_exists('id', $delete));
+        $this->assertTrue($delete['id'] === $post['id']);
     }
 }
