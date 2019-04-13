@@ -1,4 +1,4 @@
-<?php namespace Spinegar\Sugar7Wrapper;
+<?php namespace Spinegar\SugarRestClient;
 
 /**
  * SugarCRM 7 Rest Wrapper
@@ -22,7 +22,7 @@ class Rest {
   */
   public function __construct()
   {
-    $this->client = new \Spinegar\Sugar7Wrapper\Clients\Guzzle;
+    $this->client = new Clients\Guzzle;
   }
   
   /**

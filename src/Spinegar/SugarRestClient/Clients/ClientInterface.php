@@ -1,4 +1,4 @@
-<?php namespace Spinegar\Sugar7Wrapper\Clients;
+<?php namespace Spinegar\SugarRestClient\Clients;
 
 interface ClientInterface {
     public function connect();

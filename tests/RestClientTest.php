@@ -1,22 +1,26 @@
 <?php
-namespace Spinegar\Sugar7Wrapper\Tests;
+declare(strict_types=1);
 
-use Spinegar\Sugar7Wrapper\Rest;
+use Spinegar\SugarRestClient\Rest;
+use PHPUnit\Framework\TestCase;
 
-class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
+class RestClientTest extends TestCase
 {
     //use your host, username, and password
-    private $host = 'https://sugar/rest/v10/';
-    private $username = 'username';
-    private $password = 'password';
-    
-    function __construct()
+    private $host = 'https://host/rest/v11/';
+    private $username = '';
+    private $password = '';
+
+    function setUp(): void
     {
+        parent::setUp();
+
         $this->client = new Rest();
         $this->client->setUrl($this->host)
             ->setUsername($this->username)
             ->setPassword($this->password)
             ->connect();
+
     }
 
     public function testMe()
@@ -29,13 +33,13 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
     public function testGetCases()
     {
         $res = $this->client->search('Cases');
-        
+
         $this->assertTrue(is_array($res));
         $this->assertArrayHasKey('records', $res);
         $this->assertTrue(is_array($res['records']));
-        
+
         $record = $res['records'][0];
-        
+
         $this->assertArrayHasKey('my_favorite', $record);
         $this->assertArrayHasKey('following', $record);
         $this->assertArrayHasKey('id', $record);
@@ -61,7 +65,7 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
         $res = $this->client->search('Cases', array(
             'fields' => 'name'
         ));
-        
+
         $this->assertTrue(is_array($res));
         $this->assertArrayHasKey('records', $res);
         $this->assertTrue(is_array($res['records']));
@@ -72,7 +76,7 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(array_key_exists('name', $record));
         $this->assertTrue(array_key_exists('date_modified', $record));
         $this->assertTrue(array_key_exists('date_modified', $record));
-        
+
         $this->assertFalse(array_key_exists('my_favorite', $record));
         $this->assertFalse(array_key_exists('following', $record));
         $this->assertFalse(array_key_exists('date_entered', $record));
@@ -107,7 +111,7 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
         $res = $this->client->create('Cases', array(
             'name' => 'Unit Test Case'
         ));
-        
+
         $case = $this->client->retrieve('Cases', $res['id']);
 
         $this->assertTrue(array_key_exists('id', $res));
@@ -142,7 +146,7 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
         ));
 
         $case = $this->client->favorite('Cases', $res['id']);
-        
+
         $this->assertTrue($case['my_favorite']);
     }
 
@@ -175,11 +179,11 @@ class Sugar7WrapperTest extends \PHPUnit_Framework_TestCase
         $this->client->relate('Accounts', $account['id'], 'cases', $case['id']);
 
         $cases = $this->client->related('Accounts', $account['id'], 'cases');
-        
+
         $this->assertTrue(is_array($cases));
         $this->assertArrayHasKey('records', $cases);
         $this->assertTrue(is_array($cases['records']));
-        
+
         $record = $cases['records'][0];
 
         $this->assertArrayHasKey('id', $record);
