@@ -368,4 +368,12 @@ class RestClientTest extends TestCase
         $this->assertTrue(array_key_exists('id', $delete));
         $this->assertTrue($delete['id'] === $post['id']);
     }
+
+    public function testSetAndGetUrl()
+    {
+        $this->client->setUrl('https://someurl.com/');
+        $url = $this->client->getUrl();
+
+        $this->assertTrue($url === 'https://someurl.com/');
+    }
 }

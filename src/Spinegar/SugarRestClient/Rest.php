@@ -1,9 +1,9 @@
 <?php namespace Spinegar\SugarRestClient;
 
 /**
- * SugarCRM 7 Rest Wrapper
+ * SugarCRM Rest Client
  *
- * @package   SugarCRM 7 Rest Wrapper
+ * @package   SugarCRM Rest Client
  * @category  Libraries
  * @author  Sean Pinegar
  * @license MIT License
