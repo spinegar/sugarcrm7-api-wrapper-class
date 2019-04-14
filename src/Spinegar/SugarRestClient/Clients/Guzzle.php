@@ -137,12 +137,9 @@ class Guzzle implements ClientInterface {
   {
     $token = $this->getNewAuthToken();
 
-    if (!$token) {
-      return false;
-    }
+    if (!$token) return false;
 
-    self::setToken($token);
-    return true;
+    return self::setToken($token);
   }
 
   /**
@@ -153,10 +150,9 @@ class Guzzle implements ClientInterface {
   */
   public function check()
   {
-    if(!$this->token)
-      return false;
+    if(!$this->token) return false;
 
-    return true;
+    return $this->token;
   }
 
   /**
@@ -167,12 +163,7 @@ class Guzzle implements ClientInterface {
   */
   public function setClientOption($key, $value)
   {
-    if(!$key || $value)
-      return false;
-
-    $this->options[$key] = $value;
-
-    return true;
+    return $this->options[$key] = $value;
   }
 
   /**
@@ -183,11 +174,7 @@ class Guzzle implements ClientInterface {
   */
   public function setUrl($value)
   {
-    if(!$value)
-      return false;
-
-    $this->url = $value;
-    return true;
+    return $this->url = $value;
   }
 
   /**
@@ -208,12 +195,7 @@ class Guzzle implements ClientInterface {
   */
   public function setUsername($value)
   {
-    if(!$value)
-      return false;
-
-    $this->username = $value;
-
-    return true;
+    return $this->username = $value;
   }
 
   /**
@@ -224,12 +206,7 @@ class Guzzle implements ClientInterface {
   */
   public function setPassword($value)
   {
-    if(!$value)
-      return false;
-
-    $this->password = $value;
-
-    return true;
+    return $this->password = $value;
   }
 
   /**
@@ -240,12 +217,7 @@ class Guzzle implements ClientInterface {
   */
   public function setPlatform($value)
   {
-    if(!$value)
-      return false;
-
-    $this->platform = $value;
-
-    return true;
+    return $this->platform = $value;
   }
 
   /**
@@ -266,12 +238,7 @@ class Guzzle implements ClientInterface {
   */
   public function setToken($value)
   {
-    if(!$value)
-      return false;
-
-    $this->token = $value;
-
-    return true;
+    return $this->token = $value;
   }
 
   /**
@@ -287,8 +254,7 @@ class Guzzle implements ClientInterface {
   public function request($method, $endpoint, $parameters = array(), $decode_json = true)
   {
     // Move to getClient?
-    if(!self::check())
-      self::connect();
+    if(!self::check()) self::connect();
 
     $parameters['headers'] = array('OAuth-Token' => $this->token);
     try {
@@ -361,9 +327,6 @@ class Guzzle implements ClientInterface {
   */
   public function postFile($endpoint, $parameters = array())
   {
-    if(!self::check())
-      self::connect();
-
     // I have a slight feeling this may be a BC break.
     // New method: (name, contents, filename)
     // http://docs.guzzlephp.org/en/latest/request-options.html#multipart

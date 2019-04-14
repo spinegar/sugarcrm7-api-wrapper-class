@@ -22,8 +22,7 @@ class RestClientTest extends TestCase
         $this->client->setUrl($this->host)
             ->setUsername($this->username)
             ->setPassword($this->password)
-            ->setPlatform($this->platform)
-            ->connect();
+            ->setPlatform($this->platform);
 
     }
 
@@ -140,7 +139,7 @@ class RestClientTest extends TestCase
         $this->assertTrue('Assigned' === $post['status']);
 
         $delete = $this->client->delete('Cases', $post['id']);
-        $this->assertTrue($delete);
+        $this->assertTrue($delete['id'] === $post['id']);
     }
 
     public function testGetCaseById()

@@ -24,28 +24,6 @@ class Rest {
   {
     $this->client = new Clients\Guzzle;
   }
-  
-  /**
-  * Function: connect()
-  * Parameters:   none    
-  * Description:  Authenticate and set the oAuth 2.0 token
-  * Returns:  TRUE on login success, otherwise FALSE
-  */
-  public function connect()
-  {
-    return $this->client->connect();
-  }
-
-  /**
-  * Function: check()
-  * Parameters:   none    
-  * Description:  Check if authenticated
-  * Returns:  TRUE if authenticated, otherwise FALSE
-  */
-  public function check()
-  {
-    return $this->client->check();
-  }
 
   /**
    * Function: setClientOption()
@@ -141,17 +119,9 @@ class Rest {
   */
   public function create($module, $fields)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module;
 
-    $request = $this->client->post($endpoint, $fields);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->post($endpoint, $fields);
   }
 
   /**
@@ -171,17 +141,9 @@ class Rest {
   */
   public function search($module, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module;
 
-    $request = $this->client->get($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint, $parameters);
   }
 
   /**
@@ -193,17 +155,9 @@ class Rest {
    */
   public function filter($module, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/filter';
 
-    $request = $this->client->get($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint, $parameters);
   }
 
   /**
@@ -215,17 +169,9 @@ class Rest {
    */
   public function countRecords($module, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/count';
 
-    $request = $this->client->get($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint, $parameters);
   }
 
    /**
@@ -237,17 +183,9 @@ class Rest {
   */
    public function delete($module, $record)
    {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record;
 
-    $request = $this->client->delete($endpoint);
-
-    if(!$request)
-      return false;
-
-    return true;
+    return $this->client->delete($endpoint);
   }
 
   /**
@@ -259,17 +197,9 @@ class Rest {
   */
   public function retrieve($module, $record)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record;
 
-    $request = $this->client->get($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint);
   }
 
   /**
@@ -282,17 +212,9 @@ class Rest {
   */
   public function update($module, $record, $fields)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record;
 
-    $request = $this->client->put($endpoint, $fields);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->put($endpoint, $fields);
   }
 
   /**
@@ -304,17 +226,9 @@ class Rest {
   */
   public function favorite($module, $record)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/favorite';
 
-    $request = $this->client->put($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->put($endpoint);
   }
 
   /**
@@ -326,17 +240,9 @@ class Rest {
   */
   public function unfavorite($module, $record)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/favorite';
 
-    $request = $this->client->delete($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->delete($endpoint);
   }
 
   /**
@@ -348,17 +254,9 @@ class Rest {
   */
   public function files($module, $record)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/file';
 
-    $request = $this->client->get($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint);
   }
 
   /**
@@ -372,16 +270,8 @@ class Rest {
   */
   public function download($module, $record, $field, $destinationFile)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/file/' . $field;
-    $result = $this->client->getFile($endpoint, $destinationFile);
-
-    if(!$result)
-      return false;
-
-    return $result;
+    return $this->client->getFile($endpoint, $destinationFile);
   }
 
   /**
@@ -395,9 +285,6 @@ class Rest {
   */
   public function upload($module, $record, $field, $sourceFilePath)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/file/' . $field;
 
     $parameters = array(
@@ -406,12 +293,7 @@ class Rest {
       "$field"          => "@" . $sourceFilePath,
     );
 
-    $result = $this->client->postFile($endpoint, $parameters);
-
-    if(!$result)
-      return false;
-
-    return $result;
+    return $this->client->postFile($endpoint, $parameters);
   }
 
   /**
@@ -424,17 +306,9 @@ class Rest {
   */
   public function deleteFile($module, $record, $field)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/file/' . $field;
 
-    $request = $this->client->delete($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->delete($endpoint);
   }
 
   /**
@@ -448,17 +322,9 @@ class Rest {
   */
   public function related($module, $record, $link, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/link/' . $link;
 
-    $request = $this->client->get($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint, $parameters);
   }
 
   /**
@@ -473,17 +339,9 @@ class Rest {
   */
   public function relate($module, $record, $link, $related_record, $fields=array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/link/' . $link . '/' . $related_record;
 
-    $request = $this->client->post($endpoint, $fields);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->post($endpoint, $fields);
   }
 
   /**
@@ -495,17 +353,9 @@ class Rest {
   */
   public function unrelate($module, $record, $link, $related_record)
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/link/' . $link . '/' . $related_record;
 
-    $request = $this->client->delete($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->delete($endpoint);
   }
 
   /**
@@ -520,17 +370,9 @@ class Rest {
   */
   public function updateRelationship($module, $record, $link, $related_record, $fields=array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = $module . '/' . $record . '/link/' . $link . '/' . $related_record;
 
-    $request = $this->client->put($endpoint,  $fields);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->put($endpoint,  $fields);
   }
 
   /**
@@ -542,15 +384,7 @@ class Rest {
   */
   public function getEndpoint($endpoint, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
-    $request = $this->client->get($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint, $parameters);
   }
 
   /**
@@ -562,15 +396,7 @@ class Rest {
   */
   public function postEndpoint($endpoint, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
-    $request = $this->client->post($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->post($endpoint, $parameters);
   }
 
   /**
@@ -582,15 +408,7 @@ class Rest {
   */
   public function putEndpoint($endpoint, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
-    $request = $this->client->put($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->put($endpoint, $parameters);
   }
 
   /**
@@ -602,15 +420,7 @@ class Rest {
   */
   public function deleteEndpoint($endpoint, $parameters = array())
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
-    $request = $this->client->delete($endpoint, $parameters);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->delete($endpoint, $parameters);
   }
   
     /**
@@ -621,16 +431,8 @@ class Rest {
   */
   public function me()
   {
-    if(!$this->client->check())
-      $this->client->connect();
-
     $endpoint = 'me';
 
-    $request = $this->client->get($endpoint);
-
-    if(!$request)
-      return false;
-
-    return $request;
+    return $this->client->get($endpoint);
   }
 }
