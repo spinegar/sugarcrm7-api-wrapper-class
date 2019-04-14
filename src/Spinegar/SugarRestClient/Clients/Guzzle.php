@@ -230,6 +230,17 @@ class Guzzle implements ClientInterface {
     return $this->platform;
   }
 
+    /**
+     * Function: getToken()
+     * Parameters:   none
+     * Description:  Set $token
+     * Returns:  returns FALSE is falsy, otherwise TRUE
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
   /**
   * Function: setToken()
   * Parameters:   none
@@ -256,7 +267,8 @@ class Guzzle implements ClientInterface {
     // Move to getClient?
     if(!self::check()) self::connect();
 
-    $parameters['headers'] = array('OAuth-Token' => $this->token);
+    $parameters['headers']['OAuth-Token'] = $this->token;
+
     try {
         $response = $this->getClient()->request($method, $endpoint, $parameters);
     } catch (\GuzzleHttp\Exception\ClientException $e) {
@@ -327,14 +339,25 @@ class Guzzle implements ClientInterface {
   */
   public function postFile($endpoint, $parameters = array())
   {
-    // I have a slight feeling this may be a BC break.
-    // New method: (name, contents, filename)
-    // http://docs.guzzlephp.org/en/latest/request-options.html#multipart
-    $parameters = array('multipart' => $parameters);
+    $output = [];
 
-    // Is returning the response the correct action here? The original one
-    // returned an array of responses if I groked the Guzzle code correctly.
-    return $this->request('POST', $endpoint, $parameters, false);
+    foreach ( $parameters as $key => $value ) {
+      if ( ! is_array( $value ) && $key!== '') {
+          $output[] = [
+              'name'     => $key,
+              'contents' => $value
+          ];
+          continue;
+      }
+    }
+
+    $parameters = ['multipart' => $output];
+
+    $res = $this->request('POST', $endpoint, $parameters, false);
+
+    if($res->getStatusCode() !== 200) return false;
+
+    return true;
   }
 
   /**
@@ -345,7 +368,7 @@ class Guzzle implements ClientInterface {
   * Description:  Calls the API via HTTP POST
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  public function post($endpoint, $parameters = array())
+  public function post($endpoint, $parameters = [])
   {
     return $this->request('POST', $endpoint,
         array('json' => $parameters));
@@ -359,7 +382,7 @@ class Guzzle implements ClientInterface {
   * Description:  Calls the API via HTTP PUT
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  public function put($endpoint, $parameters = array())
+  public function put($endpoint, $parameters = [])
   {
     return $this->request('PUT', $endpoint,
         array('json' => $parameters));
@@ -372,7 +395,7 @@ class Guzzle implements ClientInterface {
   * Description:  Calls the API via HTTP DELETE
   * Returns:  Returns an Array if successful, otherwise FALSE
   */
-  public function delete($endpoint, $parameters = array())
+  public function delete($endpoint, $parameters = [])
   {
     return $this->request('DELETE', $endpoint);
   }

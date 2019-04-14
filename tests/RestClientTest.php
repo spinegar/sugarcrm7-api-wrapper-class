@@ -375,4 +375,23 @@ class RestClientTest extends TestCase
 
         $this->assertTrue($url === 'https://someurl.com/');
     }
+
+    public function testUpload()
+    {
+        $name = 'Unit Test Note ' . time();
+
+        $note = $this->client->create('Notes', array(
+            'name' => $name
+        ));
+
+        $filename = 'testfile-' . time() . '.txt';
+
+        fopen($filename, 'w');
+
+        $upload = $this->client->upload('Notes', $note['id'], 'filename', realpath($filename));
+
+        $this->assertTrue($upload);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Notes', 'id' => $note['id']);
+    }
 }

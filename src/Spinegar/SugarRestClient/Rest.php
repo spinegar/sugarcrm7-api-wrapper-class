@@ -290,7 +290,8 @@ class Rest {
     $parameters = array(
       "format"          => "sugar-html-json",
       "delete_if_fails" => true,
-      "$field"          => "@" . $sourceFilePath,
+      "oauth_token"     => $this->client->getToken(),
+      "$field"          => fopen($sourceFilePath, 'r')
     );
 
     return $this->client->postFile($endpoint, $parameters);
