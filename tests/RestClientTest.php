@@ -427,4 +427,31 @@ class RestClientTest extends TestCase
 
         $this->testGeneratedRecords[] = (object) array('module' => 'Notes', 'id' => $note['id']);
     }
+
+    public function testDeleteFile()
+    {
+        $name = 'Unit Test Note ' . time();
+
+        $note = $this->client->create('Notes', array(
+            'name' => $name
+        ));
+
+        $this->assertTrue(array_key_exists('id', $note));
+
+        $filename = 'testfile-' . time() . '.txt';
+
+        fopen($filename, 'w');
+
+        $upload = $this->client->upload('Notes', $note['id'], 'filename', realpath($filename));
+
+        $this->assertTrue($upload);
+
+        unlink($filename);
+
+        $res = $this->client->deleteFile('Notes', $note['id'], 'filename', './down-' . $filename);
+
+        $this->assertTrue(!empty($res));
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Notes', 'id' => $note['id']);
+    }
 }
