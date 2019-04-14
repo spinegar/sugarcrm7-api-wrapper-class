@@ -321,12 +321,16 @@ class Guzzle implements ClientInterface {
   */
   public function getFile($endpoint, $destinationFile, $parameters = array())
   {
-    return $this->request('GET', $endpoint,
+    $res = $this->request('GET', $endpoint,
         array(
             'query' => $parameters,
             'sink' => $destinationFile,
             'decode_content' => false
         ), false);
+
+    if($res->getStatusCode() !== 200) return false;
+
+    return true;
   }
 
   /**

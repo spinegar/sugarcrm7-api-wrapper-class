@@ -34,9 +34,9 @@ class RestClientTest extends TestCase
             $res = $this->client->delete($record->module, $record->id);
 
             if($res) {
-                print('teardown successful for ' . json_encode($record));
+                echo 'teardown successful for ' . json_encode($record);
             } else {
-                print('teardown unsuccessful for ' . json_encode($record));
+                echo 'teardown unsuccessful for ' . json_encode($record);
             }
         }
 
@@ -384,6 +384,8 @@ class RestClientTest extends TestCase
             'name' => $name
         ));
 
+        $this->assertTrue(array_key_exists('id', $note));
+
         $filename = 'testfile-' . time() . '.txt';
 
         fopen($filename, 'w');
@@ -391,6 +393,37 @@ class RestClientTest extends TestCase
         $upload = $this->client->upload('Notes', $note['id'], 'filename', realpath($filename));
 
         $this->assertTrue($upload);
+
+        unlink($filename);
+
+        $this->testGeneratedRecords[] = (object) array('module' => 'Notes', 'id' => $note['id']);
+    }
+
+    public function testDownload()
+    {
+        $name = 'Unit Test Note ' . time();
+
+        $note = $this->client->create('Notes', array(
+            'name' => $name
+        ));
+
+        $this->assertTrue(array_key_exists('id', $note));
+
+        $filename = 'testfile-' . time() . '.txt';
+
+        fopen($filename, 'w');
+
+        $upload = $this->client->upload('Notes', $note['id'], 'filename', realpath($filename));
+
+        $this->assertTrue($upload);
+
+        unlink($filename);
+
+        $this->client->download('Notes', $note['id'], 'filename', './down-' . $filename);
+
+        $this->assertTrue(file_exists('down-' . $filename));
+
+        unlink('down-' . $filename);
 
         $this->testGeneratedRecords[] = (object) array('module' => 'Notes', 'id' => $note['id']);
     }
