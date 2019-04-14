@@ -6,28 +6,36 @@ License: MIT
 
 Contents
 --------
-1. About
-2. Installation
-3. Usage Example
-4. Custom & Undefined Endpoints
-5. Troubleshooting
+About
+Installation
+Usage Example
+Custom and/or Undefined Endpoints
+Troubleshooting
 
 
-1. About
+About
 -------
-- PHP library interacting with a SugarCRM 7 REST API
-- Designed to work with SugarCRM 7 and the v10 REST API
+A simple PHP library interacting with the SugarCRM v10 or later REST API.
 
-2. Installation via Composer
+v2.0.0
+-------
+v2.0.0 provides some minor updates to keep the library up to date with the PHP ecosystem.
+
+- The namespace has been updated to avoid versioning confusion with Sugar. You will be required to update the namespace to `\Spinegar\SugarRestClient\Rest` to instantiate the library.
+
+- Support for Guzzle 6 has been added.
+
+- The `connect` method has been deprecated and is now handled by the library when interacting with the Sugar API. 
+
+Installation via Composer
 ----------------------------
 Edit composer.json
 
 ```json
 {
 	"require": {
-		"spinegar/sugar7wrapper": "dev-master"
-	},
-	"minimum-stability": "dev"
+		"spinegar/sugar7wrapper": "^v2.0.0"
+	}
 }
 ```
 
@@ -43,19 +51,17 @@ $ composer install
 
 ```php
 /* Instantiate and authenticate */
-$sugar = new \Spinegar\Sugar7Wrapper\Rest();
+$sugar = new \Spinegar\SugarRestClient\Rest();
 
-$sugar->setUrl('https://sugar/rest/v10/')
-	->setUsername('restUser')
-	->setPassword('password')
-	->connect();
+$sugar->setUrl('https://sugar/rest/v11/')
+	->setUsername('user')
+	->setPassword('password');
 
 /* Instantiate and authenticate for a specific platform*/
-$sugar->setUrl('https://sugar/rest/v10/')
-    ->setUsername('restUser')
+$sugar->setUrl('https://sugar/rest/v11/')
+    ->setUsername('user')
     ->setPassword('password')
-    ->setPlatform('mobile')
-    ->connect();
+    ->setPlatform('api');
 
 /* Retrieve all records in the Cases module */
 $sugar->search('Cases');
@@ -142,14 +148,6 @@ $sugar->download('Notes', $record_id, 'filename', '/path/to/destination.ext');
 /* Upload a file associated to the filename field of a note to the server */
 $sugar->upload('Notes', $record_id, 'filename', '/path/of/local/file.ext');
 
-/* Sending multiple requests */
-$results = $this->client->send(function($client){
-	return [
-		$client->countRecords('Cases'),
-		$client->countRecords('Cases'),
-		$client->countRecords('Cases'),
-	];
-});
 ```
 
 4. Custom & Undefined Endpoints
