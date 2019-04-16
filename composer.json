@@ -1,6 +1,6 @@
 {
     "name": "spinegar/sugar7wrapper",
-    "description": "SugarCRM 7 REST API Wrapper",
+    "description": "SugarCRM REST Client",
     "authors": [
         {
             "name": "Sean Pinegar",
@@ -8,15 +8,15 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "guzzle/guzzle": "v3.8.1"
+        "php": ">=7.2",
+        "guzzlehttp/guzzle": "^6.3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.8.x"
+        "phpunit/phpunit": "^8"
     },
     "autoload": {
         "psr-0": {
-            "Spinegar\\Sugar7Wrapper": "src/"
+            "Spinegar\\SugarRestClient": "src/"
         }
     },
     "minimum-stability": "dev"
